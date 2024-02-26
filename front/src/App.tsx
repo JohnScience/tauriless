@@ -9,7 +9,7 @@ function App() {
   init().then(() => {
     console.log("tauriless-js initialized!");
     const encoded = encode({ num: 42 });
-    const v: Promise<unknown> = invoke("do_stuff_with_num", { num: 42 });
+    const v: Promise<unknown> = invoke("do_stuff_with_num", { num: 42 }, false);
     console.log("Result of tauriless_js.encode(): ", encoded);
     v.then((result) => {
       console.log("Result of tauriless_js.invoke(): ", result);

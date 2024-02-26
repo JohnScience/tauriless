@@ -30,6 +30,7 @@ getrandom = { version = "*", features = ["js"] }
 pot = "3.0.0"
 serde = "1.0.197"
 js-sys = "0.3.68"
+tauriless_common = { path = "../tauriless_common" }
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.34"

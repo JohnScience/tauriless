@@ -2,6 +2,7 @@ mod utils;
 
 use js_sys::Uint8Array;
 use serde::Deserialize;
+use tauriless_common::url::command_to_url;
 use wasm_bindgen::prelude::*;
 use web_sys::XmlHttpRequest;
 
@@ -62,7 +63,7 @@ pub fn encode(args: JsValue) -> Result<JsValue, JsValue> {
 }
 
 #[wasm_bindgen]
-pub fn invoke(command: &str, args: JsValue) -> Result<js_sys::Promise, JsValue> {
+pub fn invoke(command: &str, args: JsValue, is_async: bool) -> Result<js_sys::Promise, JsValue> {
     let encoded = Vec::<u8>::decode_from_args(args)?;
 
     let promise = js_sys::Promise::new(&mut move |resolve, reject| {
@@ -111,15 +112,8 @@ pub fn invoke(command: &str, args: JsValue) -> Result<js_sys::Promise, JsValue> 
             xhr.set_onload(Some(handler.as_ref().unchecked_ref()));
             handler.forget();
         }
-        xhr.open_with_async(
-            "POST",
-            &format!(
-                "http://tauriless.localhost/{command}",
-                command = command.replace('_', "-")
-            ),
-            true,
-        )
-        .unwrap();
+        let url: String = command_to_url(command, is_async);
+        xhr.open_with_async("POST", &url, true).unwrap();
         xhr.send_with_opt_u8_array(Some(&encoded)).unwrap();
     });
 

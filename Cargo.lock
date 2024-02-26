@@ -2686,6 +2686,7 @@ dependencies = [
  "serde",
  "serde-wasm-bindgen",
  "serde_json",
+ "tauriless_common",
  "wasm-bindgen",
  "wasm-bindgen-test",
  "web-sys",
