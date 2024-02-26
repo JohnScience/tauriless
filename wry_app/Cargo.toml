@@ -1,0 +1,27 @@
+[package]
+name = "wry_app"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = "0.7.4"
+axum-embed = "0.1.0"
+rust-embed = "8.2.0"
+tao = "0.26.0"
+tokio = { version = "1.36.0", features = ["rt", "sync", "rt-multi-thread"] }
+wry = "0.37.0"
+tauriless = { path = "../tauriless" }
+serde = { version = "1.0.197", features = ["derive"] }
+bson = "2.9.0"
+
+[build-dependencies]
+which = "6.0"
+cargo-emit = { git = "https://github.com/JohnScience/cargo-emit", features = [
+    "compare_and_set_contents_hash",
+] }
+
+[dev-dependencies]
+postcard = { version = "1.0.8", features = ["use-std"] }
+serde_json = "1.0.114"
