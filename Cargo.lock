@@ -2707,6 +2707,7 @@ dependencies = [
  "quote",
  "serde",
  "syn 2.0.50",
+ "tauriless",
  "tauriless_common",
  "thiserror",
  "wry",
