@@ -1,5 +1,10 @@
 # tauriless_macro
 
+[![Crates.io](https://img.shields.io/crates/v/tauriless_macro)](https://crates.io/crates/tauriless_macro)
+[![Downloads](https://img.shields.io/crates/d/tauriless_macro.svg)](https://crates.io/crates/tauriless_macro)
+[![Documentation](https://docs.rs/tauriless_macro/badge.svg)](https://docs.rs/tauriless_macro)
+[![License](https://img.shields.io/crates/l/tauriless_macro)](https://crates.io/crates/tauriless_macro)
+
 The proc-macro crate for [`tauriless`].
 
 ## Example
