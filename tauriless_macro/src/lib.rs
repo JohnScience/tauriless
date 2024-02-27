@@ -1,29 +1,34 @@
+#![doc = include_str!("../README.md")]
+
+use dyn_clone::clone_box;
 use proc_macro::{token_stream::IntoIter as TokenTreeIter, TokenStream};
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{FnArg, ReturnType, ItemFn};
-use dyn_clone::clone_box;
-use tauriless_common::url::{TAURILESS_SYNC_PROTOCOL, TAURILESS_ASYNC_PROTOCOL};
+use syn::{FnArg, ItemFn, ReturnType};
+use tauriless_common::url::{TAURILESS_ASYNC_PROTOCOL, TAURILESS_SYNC_PROTOCOL};
 
 mod impls_asserts;
 
 use impls_asserts::{
-    extend_with_serde_deserialize_impls_asserts,
-    extend_with_serde_serialize_impls_assert,
+    extend_with_serde_deserialize_impls_asserts, extend_with_serde_serialize_impls_assert,
     CloneableIterator,
 };
-
 
 struct Commands(syn::punctuated::Punctuated<syn::Ident, syn::token::Comma>);
 impl syn::parse::Parse for Commands {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        let content = syn::punctuated::Punctuated::<syn::Ident, syn::token::Comma>::parse_terminated(input)?;
+        let content =
+            syn::punctuated::Punctuated::<syn::Ident, syn::token::Comma>::parse_terminated(input)?;
         Ok(Commands(content))
     }
 }
 
-fn extend_with_command(ts: &mut proc_macro2::TokenStream, fn_item: &ItemFn, fn_typed_args: &dyn CloneableIterator<&syn::PatType>) {
+fn extend_with_command(
+    ts: &mut proc_macro2::TokenStream,
+    fn_item: &ItemFn,
+    fn_typed_args: &dyn CloneableIterator<&syn::PatType>,
+) {
     let name: &syn::Ident = &fn_item.sig.ident;
     let name_str = name.to_string();
     let url_name = name_str.replace("_", "-");
@@ -32,7 +37,8 @@ fn extend_with_command(ts: &mut proc_macro2::TokenStream, fn_item: &ItemFn, fn_t
     let cmd_name = syn::Ident::new(&cmd_name, name.span());
     let typed_args_count = clone_box(fn_typed_args).count();
     let types_iter = clone_box(fn_typed_args).map(|pat_type| &pat_type.ty);
-    let args_iter = (0..typed_args_count).map(|i| syn::Ident::new(&format!("arg{}", i), name.span()));
+    let args_iter =
+        (0..typed_args_count).map(|i| syn::Ident::new(&format!("arg{}", i), name.span()));
     let args_iter_clone1 = args_iter.clone();
     let args_iter_clone2 = args_iter.clone();
     let return_type = match &fn_item.sig.output {
@@ -75,7 +81,7 @@ fn extend_with_command(ts: &mut proc_macro2::TokenStream, fn_item: &ItemFn, fn_t
                     todo!()
                 }
 
-                
+
                 fn async_command( (#(#args_iter_clone2),*): Self::Args ) -> impl std::future::Future<Output = Self::RetTy> {
                     async move {
                         #name(#(#args_iter_clone1),*).await
@@ -94,6 +100,67 @@ fn extend_with_command(ts: &mut proc_macro2::TokenStream, fn_item: &ItemFn, fn_t
     ts.extend(cmd);
 }
 
+/// The `tauriless` equivalent of [`#[tauri::command]`](https://tauri.app/v1/guides/features/command/).
+///
+/// **Note that running asynchronous commands requires global tokio runtime.
+/// See [`tokio::runtime::Runtime::enter`](https://docs.rs/tokio/latest/tokio/runtime/struct.Runtime.html#method.enter).**
+///
+/// ## Example
+///
+/// ```rust, no_run
+/// use tao::{
+///     event::{Event, StartCause, WindowEvent},
+///     event_loop::{ControlFlow, EventLoop},
+///     window::WindowBuilder,
+/// };
+/// use tauriless::{command, commands, WebViewBuilderExt};
+/// use wry::WebViewBuilder;
+///
+/// #[command]
+/// fn argsless_sync_command() {}
+///
+/// #[command]
+/// async fn async_command_with_args(n: i32) -> i32 {
+///    // some async code
+///    n * 2
+/// }
+///
+/// fn main() -> wry::Result<()>     {
+///    let rt = tokio::runtime::Builder::new_multi_thread()
+///        .enable_all()
+///        .build()
+///        .unwrap();
+///    // This allows us to use tokio::spawn inside wry asynchronous custom protocol handlers.
+///    // Since wry doesn't allow us to pass a runtime to the WebViewBuilder, we have to use a global runtime.
+///    let _rt_guard = rt.enter();
+///
+///    let event_loop = EventLoop::new();
+///    let window = WindowBuilder::new()
+///        .with_title("My Tauriless App")
+///        .build(&event_loop)
+///        .unwrap();
+///
+///    // ...
+///    
+///    let _webview = WebViewBuilder::new(&window)
+///        // ...
+///        .with_tauriless_commands(commands!(argsless_sync_command, async_command_with_args))
+///        .build()?;
+///
+///    event_loop.run(move |event, _, control_flow| {
+///        *control_flow = ControlFlow::Wait;
+///
+///        match event {
+///            Event::NewEvents(StartCause::Init) => (),
+///            Event::WindowEvent {
+///                event: WindowEvent::CloseRequested,
+///                ..
+///            } => *control_flow = ControlFlow::Exit,
+///            _ => (),
+///        }
+///    });
+/// }
+/// ```
 #[proc_macro_attribute]
 pub fn command(attr: TokenStream, item: TokenStream) -> TokenStream {
     {
@@ -112,7 +179,8 @@ pub fn command(attr: TokenStream, item: TokenStream) -> TokenStream {
     let return_type: &ReturnType = &fn_sig.output;
 
     let mut ts = proc_macro2::TokenStream::new();
-    let fn_typed_args: Box<dyn CloneableIterator<&syn::PatType>> = extend_with_serde_deserialize_impls_asserts(&mut ts, inputs);
+    let fn_typed_args: Box<dyn CloneableIterator<&syn::PatType>> =
+        extend_with_serde_deserialize_impls_asserts(&mut ts, inputs);
     let fn_typed_args: &dyn CloneableIterator<&syn::PatType> = &*fn_typed_args;
     extend_with_serde_serialize_impls_assert(&mut ts, return_type);
     extend_with_command(&mut ts, &fn_item, fn_typed_args);
@@ -120,6 +188,67 @@ pub fn command(attr: TokenStream, item: TokenStream) -> TokenStream {
     ts.into()
 }
 
+/// Creates an object that can be accepted by `tauriless::WebViewBuilderExt::with_tauriless_commands`.
+///
+/// **Note that running asynchronous commands requires global tokio runtime.
+/// See [`tokio::runtime::Runtime::enter`](https://docs.rs/tokio/latest/tokio/runtime/struct.Runtime.html#method.enter).**
+///
+/// ## Example
+///
+/// ```rust, no_run
+/// use tao::{
+///     event::{Event, StartCause, WindowEvent},
+///     event_loop::{ControlFlow, EventLoop},
+///     window::WindowBuilder,
+/// };
+/// use tauriless::{command, commands, WebViewBuilderExt};
+/// use wry::WebViewBuilder;
+///
+/// #[command]
+/// fn argsless_sync_command() {}
+///
+/// #[command]
+/// async fn async_command_with_args(n: i32) -> i32 {
+///    // some async code
+///    n * 2
+/// }
+///
+/// fn main() -> wry::Result<()>     {
+///    let rt = tokio::runtime::Builder::new_multi_thread()
+///        .enable_all()
+///        .build()
+///        .unwrap();
+///    // This allows us to use tokio::spawn inside wry asynchronous custom protocol handlers.
+///    // Since wry doesn't allow us to pass a runtime to the WebViewBuilder, we have to use a global runtime.
+///    let _rt_guard = rt.enter();
+///
+///    let event_loop = EventLoop::new();
+///    let window = WindowBuilder::new()
+///        .with_title("My Tauriless App")
+///        .build(&event_loop)
+///        .unwrap();
+///
+///    // ...
+///    
+///    let _webview = WebViewBuilder::new(&window)
+///        // ...
+///        .with_tauriless_commands(commands!(argsless_sync_command, async_command_with_args))
+///        .build()?;
+///
+///    event_loop.run(move |event, _, control_flow| {
+///        *control_flow = ControlFlow::Wait;
+///
+///        match event {
+///            Event::NewEvents(StartCause::Init) => (),
+///            Event::WindowEvent {
+///                event: WindowEvent::CloseRequested,
+///                ..
+///            } => *control_flow = ControlFlow::Exit,
+///            _ => (),
+///        }
+///    });
+/// }
+/// ```
 #[proc_macro]
 pub fn commands(input: TokenStream) -> TokenStream {
     let comma_separated_commands = syn::parse_macro_input!(input as Commands);
@@ -188,7 +317,7 @@ pub fn commands(input: TokenStream) -> TokenStream {
                     let uri: wry::http::uri::Uri = parts.uri;
                     let path: &str = uri.path();
                     let path: &str = path.trim_start_matches('/');
-        
+
                     let resp_body: std::result::Result::<Vec<u8>, tauriless::pot::Error> = match path {
                         #sync_proto_branches
                     };
@@ -219,6 +348,6 @@ pub fn commands(input: TokenStream) -> TokenStream {
             commands
         }
     };
-    
+
     ts.into()
 }

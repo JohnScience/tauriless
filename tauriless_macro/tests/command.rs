@@ -20,6 +20,9 @@ fn command_with_args_and_return_type(_a: i32, _b: i32) -> i32 {
 // #[command]
 // fn command_with_non_deserializable_arg(b: i32, _a: NotDeserializable) {}
 
+// TODO: consider adding tests for de-serialization of arguments from JSON, and the serialization
+// of the return type.
+
 fn main() {
     argsless_sync_command();
     command_with_args(1, 2);

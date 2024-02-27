@@ -21,7 +21,3 @@ which = "6.0"
 cargo-emit = { git = "https://github.com/JohnScience/cargo-emit", features = [
     "compare_and_set_contents_hash",
 ] }
-
-[dev-dependencies]
-postcard = { version = "1.0.8", features = ["use-std"] }
-serde_json = "1.0.114"
