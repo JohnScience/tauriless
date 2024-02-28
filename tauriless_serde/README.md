@@ -1,5 +1,10 @@
 # tauriless_serde
 
+[![Crates.io](https://img.shields.io/crates/v/tauriless_serde)](https://crates.io/crates/tauriless_serde)
+[![Downloads](https://img.shields.io/crates/d/tauriless_serde.svg)](https://crates.io/crates/tauriless_serde)
+[![Documentation](https://docs.rs/tauriless_serde/badge.svg)](https://docs.rs/tauriless_serde)
+[![License](https://img.shields.io/crates/l/tauriless_serde)](https://crates.io/crates/tauriless_serde)
+
 Serialization and deserialization of messages for [`tauriless`].
 
 ## Testing
