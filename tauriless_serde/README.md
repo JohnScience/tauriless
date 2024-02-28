@@ -5,7 +5,7 @@
 [![Documentation](https://docs.rs/tauriless_serde/badge.svg)](https://docs.rs/tauriless_serde)
 [![License](https://img.shields.io/crates/l/tauriless_serde)](https://crates.io/crates/tauriless_serde)
 
-Serialization and deserialization of messages for [`tauriless`].
+Implementation details of serialization and deserialization of messages for [`tauriless`].
 
 ## Testing
 

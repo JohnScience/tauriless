@@ -1,5 +1,6 @@
 [package]
 name = "tauriless_serde"
+description = "Implementation details of serialization and deserialization of messages for `tauriless`"
 version = "0.1.0"
 edition = "2021"
 repository = "https://github.com/JohnScience/tauriless/"
