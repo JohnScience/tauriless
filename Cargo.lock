@@ -2510,7 +2510,7 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
- "tauriless_common 0.1.0",
+ "tauriless_common 0.2.0",
  "tauriless_macro",
  "tauriless_serde 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "wry",
@@ -2523,7 +2523,7 @@ dependencies = [
  "console_error_panic_hook",
  "js-sys",
  "serde-wasm-bindgen",
- "tauriless_common 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tauriless_common 0.1.0",
  "tauriless_serde 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "wasm-bindgen",
  "wasm-bindgen-test",
@@ -2533,12 +2533,12 @@ dependencies = [
 [[package]]
 name = "tauriless_common"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a94ae2fab4dd9b0e1f87dae5136bd3571f3a4a2d7fdc9187f76722cd89f36499"
 
 [[package]]
 name = "tauriless_common"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a94ae2fab4dd9b0e1f87dae5136bd3571f3a4a2d7fdc9187f76722cd89f36499"
+version = "0.2.0"
 
 [[package]]
 name = "tauriless_macro"
@@ -2556,7 +2556,7 @@ dependencies = [
  "syn 2.0.50",
  "tao",
  "tauriless",
- "tauriless_common 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tauriless_common 0.1.0",
  "thiserror",
  "tokio",
  "wasm-bindgen",

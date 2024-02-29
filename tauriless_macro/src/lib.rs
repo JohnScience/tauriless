@@ -6,7 +6,7 @@ use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{FnArg, ItemFn, ReturnType};
-use tauriless_common::url::{TAURILESS_ASYNC_PROTOCOL, TAURILESS_SYNC_PROTOCOL};
+use tauriless_common::url::TAURILESS_ASYNC_PROTOCOL;
 
 mod impls_asserts;
 
@@ -259,36 +259,38 @@ pub fn commands(input: TokenStream) -> TokenStream {
     });
     let command_struct_idents_clone = command_struct_idents.clone();
 
-    let mut sync_proto_branches = proc_macro2::TokenStream::new();
-
-    for cmd in command_struct_idents {
-        sync_proto_branches.extend(quote! {
-            <#cmd as tauriless::Command>::URL_NAME if !<#cmd as tauriless::Command>::IS_ASYNC => {
-                let args: <#cmd as tauriless::Command>::Args = match tauriless::slice_to_deserialize(body.as_slice()) {
-                    Ok(args) => args,
-                    Err(e) => return tauriless::handle_deserialization_error(<#cmd as tauriless::Command>::NAME, e),
-                };
-                let ret: <#cmd as tauriless::Command>::RetTy = <#cmd as tauriless::Command>::sync_command(args);
-                tauriless::serialize_to_vec_u8(&ret)
-            },
-        });
-    }
-    sync_proto_branches.extend(quote! {
-        _ => return tauriless::handle_unknown_command(path),
-    });
-
     let mut async_proto_branches = proc_macro2::TokenStream::new();
 
     for cmd in command_struct_idents_clone {
         async_proto_branches.extend(quote! {
-            <#cmd as tauriless::Command>::URL_NAME if <#cmd as tauriless::Command>::IS_ASYNC => {
+            <#cmd as tauriless::Command>::URL_NAME => {
                 let args: <#cmd as tauriless::Command>::Args = match tauriless::slice_to_deserialize(body.as_slice()) {
                     Ok(args) => args,
                     Err(e) => return responder.respond(tauriless::handle_deserialization_error(<#cmd as tauriless::Command>::NAME, e)),
                 };
-                let handle = tokio::runtime::Handle::try_current().expect("Using async protocol handler requires entering the tokio runtime context prior to that. Use `let _rt_guard = rt.enter()` to enter the runtime context. See <https://docs.rs/tokio/latest/tokio/runtime/struct.Runtime.html#method.enter>.");
-                handle.spawn(async move {
-                    let ret: <#cmd as tauriless::Command>::RetTy = <#cmd as tauriless::Command>::async_command(args).await;
+                if <#cmd as tauriless::Command>::IS_ASYNC {
+                    let handle = tokio::runtime::Handle::try_current().expect("Using async protocol handler requires entering the tokio runtime context prior to that. Use `let _rt_guard = rt.enter()` to enter the runtime context. See <https://docs.rs/tokio/latest/tokio/runtime/struct.Runtime.html#method.enter>.");
+                    handle.spawn(async move {
+                        let ret: <#cmd as tauriless::Command>::RetTy = <#cmd as tauriless::Command>::async_command(args).await;
+                        match tauriless::serialize_to_vec_u8(&ret) {
+                            Ok(ret) => {
+                                responder.respond(wry::http::response::Response::builder()
+                                    .status(wry::http::StatusCode::OK)
+                                    .header(
+                                        wry::http::header::ACCESS_CONTROL_ALLOW_ORIGIN,
+                                        wry::http::HeaderValue::from_static("*"),
+                                    )
+                                    .body(std::borrow::Cow::Owned(ret))
+                                    .unwrap()
+                                );
+                            },
+                            Err(e) => {
+                                responder.respond(tauriless::handle_serialization_error(e));
+                            }
+                        }
+                    });
+                } else {
+                    let ret: <#cmd as tauriless::Command>::RetTy = <#cmd as tauriless::Command>::sync_command(args);
                     match tauriless::serialize_to_vec_u8(&ret) {
                         Ok(ret) => {
                             responder.respond(wry::http::response::Response::builder()
@@ -305,7 +307,7 @@ pub fn commands(input: TokenStream) -> TokenStream {
                             responder.respond(tauriless::handle_serialization_error(e));
                         }
                     }
-                });
+                }
             },
         });
     }
@@ -318,30 +320,7 @@ pub fn commands(input: TokenStream) -> TokenStream {
         {
             // Using closures caused an error.
             fn commands<'a>(builder: wry::WebViewBuilder<'a>) -> wry::WebViewBuilder<'a> {
-                builder.with_custom_protocol( #TAURILESS_SYNC_PROTOCOL.to_string(), | req: wry::http::request::Request<Vec<u8>> | {
-                    let (parts, body): (wry::http::request::Parts, Vec<u8>) = req.into_parts();
-                    let uri: wry::http::uri::Uri = parts.uri;
-                    let path: &str = uri.path();
-                    let path: &str = path.trim_start_matches('/');
-
-                    let resp_body: std::result::Result::<Vec<u8>, tauriless::serialize_to_vec_u8::Error> = match path {
-                        #sync_proto_branches
-                    };
-                    let resp_body: Vec<u8> = match resp_body {
-                        Ok(body) => body,
-                        Err(e) => return tauriless::handle_serialization_error(e),
-                    };
-                    #[cfg(debug_assertions)]
-                    println!("Sending a response: {:#?}", resp_body);
-                    wry::http::response::Response::builder()
-                        .status(wry::http::StatusCode::OK)
-                        .header(
-                            wry::http::header::ACCESS_CONTROL_ALLOW_ORIGIN,
-                            wry::http::HeaderValue::from_static("*"),
-                        )
-                        .body(std::borrow::Cow::Owned(resp_body))
-                        .unwrap()
-                }).with_asynchronous_custom_protocol( #TAURILESS_ASYNC_PROTOCOL.to_string(), | req: wry::http::request::Request<Vec<u8>>, responder: wry::RequestAsyncResponder | {
+                builder.with_asynchronous_custom_protocol( #TAURILESS_ASYNC_PROTOCOL.to_string(), | req: wry::http::request::Request<Vec<u8>>, responder: wry::RequestAsyncResponder | {
                     let (parts, body): (wry::http::request::Parts, Vec<u8>) = req.into_parts();
                     let uri: wry::http::uri::Uri = parts.uri;
                     let path: &str = uri.path();
