@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 pub fn handle_deserialization_error(
     cmd_name: &str,
-    e: pot::Error,
+    e: tauriless_serde::slice_to_deserialize::Error,
 ) -> wry::http::response::Response<Cow<'static, [u8]>> {
     #[cfg(debug_assertions)]
     println!("Failed to deserialize to `{cmd_name}::Args`: {e:?}");
@@ -21,7 +21,7 @@ pub fn handle_deserialization_error(
 }
 
 pub fn handle_serialization_error(
-    e: pot::Error,
+    e: tauriless_serde::serialize_to_vec_u8::Error,
 ) -> wry::http::response::Response<Cow<'static, [u8]>> {
     #[cfg(debug_assertions)]
     println!("Failed to serialize the response: {e:?}");

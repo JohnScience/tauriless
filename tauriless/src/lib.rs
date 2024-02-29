@@ -1,7 +1,7 @@
 use std::future::Future;
 
-pub use pot;
 pub use tauriless_macro::{command, commands};
+pub use tauriless_serde::{serialize_to_vec_u8, slice_to_deserialize};
 
 mod commands;
 mod handlers;

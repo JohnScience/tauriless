@@ -264,12 +264,12 @@ pub fn commands(input: TokenStream) -> TokenStream {
     for cmd in command_struct_idents {
         sync_proto_branches.extend(quote! {
             <#cmd as tauriless::Command>::URL_NAME if !<#cmd as tauriless::Command>::IS_ASYNC => {
-                let args: <#cmd as tauriless::Command>::Args = match tauriless::pot::from_slice(body.as_slice()) {
+                let args: <#cmd as tauriless::Command>::Args = match tauriless::slice_to_deserialize(body.as_slice()) {
                     Ok(args) => args,
                     Err(e) => return tauriless::handle_deserialization_error(<#cmd as tauriless::Command>::NAME, e),
                 };
                 let ret: <#cmd as tauriless::Command>::RetTy = <#cmd as tauriless::Command>::sync_command(args);
-                tauriless::pot::to_vec(&ret)
+                tauriless::serialize_to_vec_u8(&ret)
             },
         });
     }
@@ -282,30 +282,36 @@ pub fn commands(input: TokenStream) -> TokenStream {
     for cmd in command_struct_idents_clone {
         async_proto_branches.extend(quote! {
             <#cmd as tauriless::Command>::URL_NAME if <#cmd as tauriless::Command>::IS_ASYNC => {
-                let args: <#cmd as tauriless::Command>::Args = match tauriless::pot::from_slice(body.as_slice()) {
+                let args: <#cmd as tauriless::Command>::Args = match tauriless::slice_to_deserialize(body.as_slice()) {
                     Ok(args) => args,
                     Err(e) => return responder.respond(tauriless::handle_deserialization_error(<#cmd as tauriless::Command>::NAME, e)),
                 };
                 let handle = tokio::runtime::Handle::try_current().expect("Using async protocol handler requires entering the tokio runtime context prior to that. Use `let _rt_guard = rt.enter()` to enter the runtime context. See <https://docs.rs/tokio/latest/tokio/runtime/struct.Runtime.html#method.enter>.");
                 handle.spawn(async move {
                     let ret: <#cmd as tauriless::Command>::RetTy = <#cmd as tauriless::Command>::async_command(args).await;
-                    let ret: Vec<u8> = tauriless::pot::to_vec(&ret).unwrap();
-                    responder.respond(wry::http::response::Response::builder()
-                        .status(wry::http::StatusCode::OK)
-                        .header(
-                            wry::http::header::ACCESS_CONTROL_ALLOW_ORIGIN,
-                            wry::http::HeaderValue::from_static("*"),
-                        )
-                        .body(std::borrow::Cow::Owned(ret))
-                        .unwrap()
-                    );
+                    match tauriless::serialize_to_vec_u8(&ret) {
+                        Ok(ret) => {
+                            responder.respond(wry::http::response::Response::builder()
+                                .status(wry::http::StatusCode::OK)
+                                .header(
+                                    wry::http::header::ACCESS_CONTROL_ALLOW_ORIGIN,
+                                    wry::http::HeaderValue::from_static("*"),
+                                )
+                                .body(std::borrow::Cow::Owned(ret))
+                                .unwrap()
+                            );
+                        },
+                        Err(e) => {
+                            responder.respond(tauriless::handle_serialization_error(e));
+                        }
+                    }
                 });
             },
         });
     }
 
     async_proto_branches.extend(quote! {
-        _ => return responder.respond(tauriless::handle_unknown_command(path)),
+        _ => responder.respond(tauriless::handle_unknown_command(path)),
     });
 
     let ts = quote! {
@@ -318,7 +324,7 @@ pub fn commands(input: TokenStream) -> TokenStream {
                     let path: &str = uri.path();
                     let path: &str = path.trim_start_matches('/');
 
-                    let resp_body: std::result::Result::<Vec<u8>, tauriless::pot::Error> = match path {
+                    let resp_body: std::result::Result::<Vec<u8>, tauriless::serialize_to_vec_u8::Error> = match path {
                         #sync_proto_branches
                     };
                     let resp_body: Vec<u8> = match resp_body {

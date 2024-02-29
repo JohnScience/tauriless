@@ -12,25 +12,16 @@ default = ["console_error_panic_hook"]
 
 [dependencies]
 wasm-bindgen = "0.2.84"
-
-# The `console_error_panic_hook` crate provides better debugging of panics by
-# logging them with `console.error`. This is great for development, but requires
-# all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
-# code size when deploying.
+tauriless_serde = "0.1"
 console_error_panic_hook = { version = "0.1.7", optional = true }
-serde_json = "1.0.114"
 serde-wasm-bindgen = "0.6.3"
 web-sys = { version = "0.3.68", features = [
     "XmlHttpRequest",
     "XmlHttpRequestResponseType",
     "Event",
 ] }
-bson = "2.9.0"
-getrandom = { version = "*", features = ["js"] }
-pot = "3.0.0"
-serde = "1.0.197"
 js-sys = "0.3.68"
-tauriless_common = { path = "../tauriless_common" }
+tauriless_common = "0.1"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.34"
