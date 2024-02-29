@@ -2545,7 +2545,6 @@ name = "tauriless_macro"
 version = "0.2.0"
 dependencies = [
  "dyn-clone",
- "impls",
  "itertools",
  "pot",
  "proc-macro2",
