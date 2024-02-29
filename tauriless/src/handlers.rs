@@ -1,5 +1,8 @@
 use std::borrow::Cow;
 
+// These error handlers are used in custom protocol handlers.
+
+#[doc(hidden)]
 pub fn handle_deserialization_error(
     cmd_name: &str,
     e: tauriless_serde::slice_to_deserialize::Error,
@@ -20,6 +23,7 @@ pub fn handle_deserialization_error(
         .unwrap()
 }
 
+#[doc(hidden)]
 pub fn handle_serialization_error(
     e: tauriless_serde::serialize_to_vec_u8::Error,
 ) -> wry::http::response::Response<Cow<'static, [u8]>> {
@@ -37,6 +41,7 @@ pub fn handle_serialization_error(
         .unwrap()
 }
 
+#[doc(hidden)]
 pub fn handle_unknown_command(cmd_name: &str) -> wry::http::response::Response<Cow<'static, [u8]>> {
     #[cfg(debug_assertions)]
     println!("Unknown `tauriless` command: '{cmd_name}'.");

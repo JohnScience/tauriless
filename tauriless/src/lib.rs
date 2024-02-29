@@ -1,18 +1,24 @@
+#![doc = include_str!("../README.md")]
+
 use std::future::Future;
 
 pub use tauriless_macro::{command, commands};
+#[doc(hidden)]
 pub use tauriless_serde::{serialize_to_vec_u8, slice_to_deserialize};
 
 mod commands;
 mod handlers;
 mod web_view_builder_ext;
 
+#[doc(hidden)]
 pub use commands::Commands;
+#[doc(hidden)]
 pub use handlers::{
     handle_deserialization_error, handle_serialization_error, handle_unknown_command,
 };
 pub use web_view_builder_ext::WebViewBuilderExt;
 
+#[doc(hidden)]
 pub trait Command {
     const IS_ASYNC: bool;
     const NAME: &'static str;

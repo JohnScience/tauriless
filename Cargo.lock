@@ -2506,13 +2506,13 @@ checksum = "e1fc403891a21bcfb7c37834ba66a547a8f402146eba7265b5a6d88059c9ff2f"
 
 [[package]]
 name = "tauriless"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
- "tauriless_common 0.2.0",
- "tauriless_macro",
- "tauriless_serde 0.1.0",
+ "tauriless_common 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tauriless_macro 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tauriless_serde 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "wry",
 ]
 
@@ -2542,7 +2542,7 @@ checksum = "372310f8ee135cd2caa89cff0fb4eb259791018c4fa1d569d315b9b54c3631e5"
 
 [[package]]
 name = "tauriless_macro"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "dyn-clone",
  "impls",
@@ -2561,6 +2561,22 @@ dependencies = [
  "tokio",
  "wasm-bindgen",
  "wry",
+]
+
+[[package]]
+name = "tauriless_macro"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72f6aba27af1d12980462b8e209a32c060f2357f2f4f073968e02893b4c793cd"
+dependencies = [
+ "dyn-clone",
+ "impls",
+ "itertools",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.50",
+ "tauriless_common 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "thiserror",
 ]
 
 [[package]]
@@ -2587,6 +2603,19 @@ dependencies = [
  "thiserror",
  "wasm-bindgen",
  "wasm-bindgen-test",
+]
+
+[[package]]
+name = "tauriless_serde"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5f1806d6ea67aca2ca4d4ba668ac7d6c0153feee31f6e692f4c43e605e8e7b35"
+dependencies = [
+ "pot",
+ "serde",
+ "serde-wasm-bindgen",
+ "thiserror",
+ "wasm-bindgen",
 ]
 
 [[package]]
