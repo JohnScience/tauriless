@@ -19,6 +19,7 @@ extern "C" {
     fn log_with_desc(desc: &str, s: &JsValue);
 }
 
+/// This function accepts a JavaScript value and returns the encoded bytes of the value.
 #[wasm_bindgen]
 pub fn encode(args: JsValue) -> Result<JsValue, JsValue> {
     let encoded: Vec<u8> = tauriless_serde::js_value_to_vec_u8(args)?;
@@ -26,6 +27,8 @@ pub fn encode(args: JsValue) -> Result<JsValue, JsValue> {
         .map_err(|_| JsValue::from_str("Failed to convert the endcoded args array to JsValue"))
 }
 
+/// This function allows you to invoke a `tauriless` command on the core process of `wry`
+/// from the WebView process.
 #[wasm_bindgen]
 pub fn invoke(command: &str, args: JsValue) -> Result<js_sys::Promise, JsValue> {
     let encoded: Vec<u8> = tauriless_serde::js_value_to_vec_u8(args)?;

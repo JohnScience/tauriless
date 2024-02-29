@@ -1,8 +1,11 @@
 [package]
 name = "tauriless-js"
-version = "0.1.0"
+version = "0.2.1"
 authors = ["Dmitrii Demenev <demenev.dmitriy1@gmail.com>"]
 edition = "2018"
+description = "JS WASM bindings for tauriless"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/JohnScience/tauriless/"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
@@ -12,7 +15,7 @@ default = ["console_error_panic_hook"]
 
 [dependencies]
 wasm-bindgen = "0.2.84"
-tauriless_serde = "0.1"
+tauriless_serde = "0.2"
 console_error_panic_hook = { version = "0.1.7", optional = true }
 serde-wasm-bindgen = "0.6.3"
 web-sys = { version = "0.3.68", features = [

@@ -2518,13 +2518,13 @@ dependencies = [
 
 [[package]]
 name = "tauriless-js"
-version = "0.1.0"
+version = "0.2.1"
 dependencies = [
  "console_error_panic_hook",
  "js-sys",
  "serde-wasm-bindgen",
  "tauriless_common 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "tauriless_serde 0.1.0",
+ "tauriless_serde 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "wasm-bindgen",
  "wasm-bindgen-test",
  "web-sys",
@@ -2577,19 +2577,6 @@ dependencies = [
  "syn 2.0.50",
  "tauriless_common 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "thiserror",
-]
-
-[[package]]
-name = "tauriless_serde"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8e559d711e8443f28cb5f0f7d1ea9d172ef54c6d9c1152c9098fad5008226cd6"
-dependencies = [
- "pot",
- "serde",
- "serde-wasm-bindgen",
- "thiserror",
- "wasm-bindgen",
 ]
 
 [[package]]
