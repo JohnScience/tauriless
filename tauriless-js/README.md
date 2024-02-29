@@ -1,12 +1,9 @@
 # tauriless-js
 
-JS WASM bindings for [`tauriless`].
+[![npm](https://img.shields.io/npm/v/tauriless-js)](https://www.npmjs.com/package/tauriless-js)
+[![npm](https://img.shields.io/npm/dt/tauriless-js)](https://www.npmjs.com/package/tauriless-js)
+[![npm](https://img.shields.io/npm/l/tauriless-js)](https://www.npmjs.com/package/tauriless-js)
 
-See tauriless on <crates.io>:
-
-[![Crates.io](https://img.shields.io/crates/v/tauriless)](https://crates.io/crates/tauriless)
-[![Downloads](https://img.shields.io/crates/d/tauriless.svg)](https://crates.io/crates/tauriless)
-[![Documentation](https://docs.rs/tauriless/badge.svg)](https://docs.rs/tauriless)
-[![License](https://img.shields.io/crates/l/tauriless)](https://crates.io/crates/tauriless)
+JS WASM bindings for [`tauriless`], a [Tauri](https://tauri.app/)-like cross-platform application framework. Unlike Tauri, `tauriless` does not require installation but doesn't support all the features of Tauri, is not a long-term solution, and is not a replacement for Tauri.
 
 [`tauriless`]: https://github.com/JohnScience/tauriless/

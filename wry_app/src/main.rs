@@ -22,15 +22,6 @@ struct MyStruct {
     num: i32,
 }
 
-fn custom_async_proto(req: wry::http::Request<Vec<u8>>, responder: wry::RequestAsyncResponder) {
-    let (_parts, body) = req.into_parts();
-    let handle = tokio::runtime::Handle::try_current().expect("Using async protocol handler requires entering the tokio runtime context prior to that. Use `let _rt_guard = rt.enter()` to enter the runtime context. See <https://docs.rs/tokio/latest/tokio/runtime/struct.Runtime.html#method.enter>.");
-    handle.spawn(async move {
-        let response = wry::http::Response::new(body);
-        responder.respond(response);
-    });
-}
-
 #[command]
 fn do_stuff_with_num(my_struct: MyStruct) -> i32 {
     my_struct.num * 2
@@ -70,7 +61,6 @@ fn main() -> wry::Result<()> {
         .with_url(&format!("http://localhost:{port}/"))
         .with_initialization_script(&format!("console.log('Server running at port ', {port});"))
         .with_tauriless_commands(commands!(do_stuff_with_num))
-        .with_asynchronous_custom_protocol("async".to_string(), custom_async_proto)
         .build()?;
 
     event_loop.run(move |event, _, control_flow| {

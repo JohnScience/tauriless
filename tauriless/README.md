@@ -1,5 +1,10 @@
 # tauriless
 
+[![Crates.io](https://img.shields.io/crates/v/tauriless)](https://crates.io/crates/tauriless)
+[![Downloads](https://img.shields.io/crates/d/tauriless.svg)](https://crates.io/crates/tauriless)
+[![Documentation](https://docs.rs/tauriless/badge.svg)](https://docs.rs/tauriless)
+[![License](https://img.shields.io/crates/l/tauriless)](https://crates.io/crates/tauriless)
+
 Run a Tauri-like application without installation.
 
 ## Warning
