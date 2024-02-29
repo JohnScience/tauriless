@@ -2506,13 +2506,13 @@ checksum = "e1fc403891a21bcfb7c37834ba66a547a8f402146eba7265b5a6d88059c9ff2f"
 
 [[package]]
 name = "tauriless"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "serde",
  "serde_json",
  "tauriless_common 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "tauriless_macro 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "tauriless_serde 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tauriless_macro 0.2.0",
+ "tauriless_serde 0.2.0",
  "wry",
 ]
 
@@ -2524,7 +2524,7 @@ dependencies = [
  "js-sys",
  "serde-wasm-bindgen",
  "tauriless_common 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "tauriless_serde 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tauriless_serde 0.2.0",
  "wasm-bindgen",
  "wasm-bindgen-test",
  "web-sys",
@@ -2543,6 +2543,22 @@ checksum = "372310f8ee135cd2caa89cff0fb4eb259791018c4fa1d569d315b9b54c3631e5"
 [[package]]
 name = "tauriless_macro"
 version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72f6aba27af1d12980462b8e209a32c060f2357f2f4f073968e02893b4c793cd"
+dependencies = [
+ "dyn-clone",
+ "impls",
+ "itertools",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.50",
+ "tauriless_common 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "thiserror",
+]
+
+[[package]]
+name = "tauriless_macro"
+version = "0.2.1"
 dependencies = [
  "dyn-clone",
  "itertools",
@@ -2563,35 +2579,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tauriless_macro"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72f6aba27af1d12980462b8e209a32c060f2357f2f4f073968e02893b4c793cd"
-dependencies = [
- "dyn-clone",
- "impls",
- "itertools",
- "proc-macro2",
- "quote",
- "syn 2.0.50",
- "tauriless_common 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "thiserror",
-]
-
-[[package]]
-name = "tauriless_serde"
-version = "0.2.0"
-dependencies = [
- "pot",
- "serde",
- "serde-wasm-bindgen",
- "serde_json",
- "thiserror",
- "wasm-bindgen",
- "wasm-bindgen-test",
-]
-
-[[package]]
 name = "tauriless_serde"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2602,6 +2589,19 @@ dependencies = [
  "serde-wasm-bindgen",
  "thiserror",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "tauriless_serde"
+version = "0.2.1"
+dependencies = [
+ "pot",
+ "serde",
+ "serde-wasm-bindgen",
+ "serde_json",
+ "thiserror",
+ "wasm-bindgen",
+ "wasm-bindgen-test",
 ]
 
 [[package]]
