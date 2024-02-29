@@ -27,7 +27,7 @@ pub fn encode(args: JsValue) -> Result<JsValue, JsValue> {
 }
 
 #[wasm_bindgen]
-pub fn invoke(command: &str, args: JsValue, is_async: bool) -> Result<js_sys::Promise, JsValue> {
+pub fn invoke(command: &str, args: JsValue) -> Result<js_sys::Promise, JsValue> {
     let encoded: Vec<u8> = tauriless_serde::js_value_to_vec_u8(args)?;
 
     let promise = js_sys::Promise::new(&mut move |resolve, reject| {
@@ -67,7 +67,7 @@ pub fn invoke(command: &str, args: JsValue, is_async: bool) -> Result<js_sys::Pr
             xhr.set_onload(Some(handler.as_ref().unchecked_ref()));
             handler.forget();
         }
-        let url: String = command_to_url(command, is_async);
+        let url: String = command_to_url(command);
         xhr.open_with_async("POST", &url, true).unwrap();
         xhr.send_with_opt_u8_array(Some(&encoded)).unwrap();
     });

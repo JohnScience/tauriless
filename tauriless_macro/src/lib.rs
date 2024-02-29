@@ -6,7 +6,7 @@ use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{FnArg, ItemFn, ReturnType};
-use tauriless_common::url::TAURILESS_ASYNC_PROTOCOL;
+use tauriless_common::url::TAURILESS_PROTOCOL;
 
 mod impls_asserts;
 
@@ -320,7 +320,7 @@ pub fn commands(input: TokenStream) -> TokenStream {
         {
             // Using closures caused an error.
             fn commands<'a>(builder: wry::WebViewBuilder<'a>) -> wry::WebViewBuilder<'a> {
-                builder.with_asynchronous_custom_protocol( #TAURILESS_ASYNC_PROTOCOL.to_string(), | req: wry::http::request::Request<Vec<u8>>, responder: wry::RequestAsyncResponder | {
+                builder.with_asynchronous_custom_protocol( #TAURILESS_PROTOCOL.to_string(), | req: wry::http::request::Request<Vec<u8>>, responder: wry::RequestAsyncResponder | {
                     let (parts, body): (wry::http::request::Parts, Vec<u8>) = req.into_parts();
                     let uri: wry::http::uri::Uri = parts.uri;
                     let path: &str = uri.path();

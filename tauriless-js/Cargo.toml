@@ -21,7 +21,7 @@ web-sys = { version = "0.3.68", features = [
     "Event",
 ] }
 js-sys = "0.3.68"
-tauriless_common = "0.1"
+tauriless_common = "0.2"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.34"
