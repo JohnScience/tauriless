@@ -1,6 +1,6 @@
 [package]
 name = "tauriless-js"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["Dmitrii Demenev <demenev.dmitriy1@gmail.com>"]
 edition = "2018"
 description = "JS WASM bindings for tauriless"
