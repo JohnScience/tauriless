@@ -19,7 +19,7 @@ The public API for `tauriless` consists of two parts:
 * `tauriless` crate for Core process of [`wry`](https://crates.io/crates/wry), which is a cross-platform WebView rendering library,
 * `tauriless-js` JavaScript/TypeScript `npm` library for the WebView process of `wry` application.
 
-### Tauirless crate
+### Tauriless crate
 
 [![Crates.io](https://img.shields.io/crates/v/tauriless)](https://crates.io/crates/tauriless)
 [![Downloads](https://img.shields.io/crates/d/tauriless.svg)](https://crates.io/crates/tauriless)
