@@ -34,9 +34,13 @@ pub fn main() {
         println!("cargo:rerun-if-changed=../front/{}", p);
     }
 
+    println!("cargo:warning= Generating hashfile for frontend. This may take a while");
     let hash_file_outcome = compare_and_set_contents_hash("../front/package-lock.json");
     match hash_file_outcome {
-        Changed | Created => build_frontend(),
+        Changed | Created => {
+            println!("cargo:warning=The frontend needs to be rebuilt. This may take a while.");
+            build_frontend()
+        }
         Unchanged => (),
     }
 }

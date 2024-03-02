@@ -10,7 +10,7 @@ This workspace is a temporary solution to the problem of running Tauri-like appl
 
 Also, the library was tested only for Windows and is not guaranteed to work on other platforms. If you want to help with testing on other platforms, please open an issue.
 
-Currently, the library can't even guarantee that the binary will work on machines of the majority of the users because of runtime dependencies on `WebView2` and `vcredist`. While `WebView2` comes pre-installed on Windows 10, it is not the case for `vcredist`.
+Currently, the library can't even guarantee that the binary will work on desktop machines of the majority of the users because of runtime dependencies on `WebView2` and `vcredist`. While `WebView2` comes pre-installed on Windows 10, it is not the case for `vcredist`. The dependency on the latter can be resolved by using [`target-feature=+crt-static`](https://rust-lang.github.io/rfcs/1721-crt-static.html).
 
 ## Usage
 

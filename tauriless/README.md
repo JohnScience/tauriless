@@ -9,7 +9,11 @@ Run a Tauri-like application without installation.
 
 ## Warning
 
-This crate is a temporary solution to the problem of running Tauri-like applications without installation. It is not a replacement for Tauri, and it is not a long-term solution. It is a workaround for the time being. Also, a small API breakage is expected soon.
+This crate is a temporary solution to the problem of running Tauri-like applications without installation. It is not a replacement for Tauri, and it is not a long-term solution. It is a workaround for the time being.
+
+Also, the library was tested only for Windows and is not guaranteed to work on other platforms. If you want to help with testing on other platforms, please open an issue.
+
+Currently, the library can't even guarantee that the binary will work on desktop machines of the majority of the users because of runtime dependencies on `WebView2` and `vcredist`. While `WebView2` comes pre-installed on Windows 10, it is not the case for `vcredist`. The dependency on the latter can be resolved by using [`target-feature=+crt-static`](https://rust-lang.github.io/rfcs/1721-crt-static.html).
 
 ## Usage
 
@@ -67,3 +71,24 @@ fn main() -> wry::Result<()>     {
     });
 }
  ```
+
+## Eliminating the dependency on vcredist on Windows
+
+Usually, to run a Rust executable on a Windows machine, the user must have `vcredist` installed. See <https://stackoverflow.com/questions/52153676/what-is-the-requirements-for-running-a-rust-compiled-program-on-another-windows>.
+
+In order to avoid the problem it's recommended to add [`.cargo/config.toml`](https://doc.rust-lang.org/cargo/reference/config.html) with the following content:
+
+```toml
+[target.x86_64-pc-windows-msvc]
+rustflags = ["-Ctarget-feature=+crt-static"]
+
+[target.i686-pc-windows-msvc]
+rustflags = ["-Ctarget-feature=+crt-static"]
+
+[target.i586-pc-windows-msvc]
+rustflags = ["-Ctarget-feature=+crt-static"]
+```
+
+It will ensure that the Rust compiler links the C runtime statically, so the user won't need to install `vcredist`. It increases the size of the binary[^1], but it's a reasonable trade-off for a standalone application.
+
+[^1]: What's the the size increase?
